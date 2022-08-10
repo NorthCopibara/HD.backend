@@ -6,10 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.northcapybara.HomelessDude.dto.PersonDTO;
 import ru.northcapybara.HomelessDude.models.Person;
 import ru.northcapybara.HomelessDude.security.JWTUtil;
@@ -55,7 +52,7 @@ public class AuthController {
         registrationService.register(person);
 
         String token = jwtUtil.generateToken(person.getUsername());
-        return Map.of("jwt-token", token);
+        return Map.of("accessToken", token);
     }
 
     @PostMapping("/login")
@@ -71,7 +68,8 @@ public class AuthController {
         }
 
         String token = jwtUtil.generateToken(personDTO.getUsername());
-        return Map.of("jwt-token", token);
+
+        return Map.of("accessToken", token);
     }
 
     public Person convertToPerson(PersonDTO personDTO) {
