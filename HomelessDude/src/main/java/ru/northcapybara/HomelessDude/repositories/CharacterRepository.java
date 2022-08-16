@@ -6,9 +6,8 @@ import ru.northcapybara.HomelessDude.models.Character;
 import ru.northcapybara.HomelessDude.models.Person;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CharacterRepository extends JpaRepository<Character, Integer> {
-    List<Optional<Character>> findCharactersByOwner(Person person);
+    List<Character> findCharactersByOwner(Person person);
 }

@@ -1,5 +1,7 @@
 package ru.northcapybara.HomelessDude.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -26,9 +28,11 @@ public class Character {
     private boolean isSelected;
 
     @OneToMany(mappedBy = "character")
+    @JsonManagedReference
     private List<CharacterMeshConfig> characterMeshConfigs;
 
     @ManyToOne
     @JoinColumn(name = "person_id")
+    @JsonBackReference
     private Person owner;
 }

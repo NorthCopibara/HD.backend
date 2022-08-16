@@ -2,7 +2,6 @@ package ru.northcapybara.HomelessDude.dto;
 
 import lombok.Data;
 import ru.northcapybara.HomelessDude.models.CharacterMeshConfig;
-import ru.northcapybara.HomelessDude.models.Person;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -17,6 +16,4 @@ public class CharacterDTO {
     private boolean isSelected;
 
     private List<CharacterMeshConfig> characterMeshConfigs;
-
-    private Person owner;
 }

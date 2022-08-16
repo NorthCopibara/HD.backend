@@ -1,5 +1,6 @@
 package ru.northcapybara.HomelessDude.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -28,5 +29,6 @@ public class Person {
     private String role;
 
     @OneToMany(mappedBy = "owner")
+    @JsonManagedReference
     private List<Character> characters;
 }

@@ -1,5 +1,6 @@
 package ru.northcapybara.HomelessDude.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -7,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 @Entity
-@Table(name = "CharacterMeshConfigs")
+@Table(name = "character_mesh_configs")
 public class CharacterMeshConfig {
     @Id
     @Column(name = "character_mesh_config_id")
@@ -23,5 +24,6 @@ public class CharacterMeshConfig {
 
     @ManyToOne
     @JoinColumn(name="character_id")
+    @JsonBackReference
     Character character;
 }
