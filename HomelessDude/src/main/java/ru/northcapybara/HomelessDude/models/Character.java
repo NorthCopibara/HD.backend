@@ -31,7 +31,7 @@ public class Character {
     @JsonManagedReference
     private List<CharacterMeshConfig> characterMeshConfigs;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "person_id")
     @JsonBackReference
     private Person owner;

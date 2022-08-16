@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.northcapybara.HomelessDude.dto.CharacterDTO;
 import ru.northcapybara.HomelessDude.models.Character;
 import ru.northcapybara.HomelessDude.models.Person;
@@ -30,15 +31,72 @@ public class CharacterService {
     }
 
     public List<CharacterDTO> findCharactersByOwner() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
-        Person owner = personDetails.getPerson();
-
         return characterRepository
-                .findCharactersByOwner(owner)
+                .findCharactersByOwner(getAuthPerson())
                 .stream()
                 .map(this::convertToCharacterDTO)
                 .collect(Collectors.toList());
+    }
+
+    public Character findCharacterById(int id) {
+        Character character = characterRepository.findCharacterByCharacterId(id);
+
+        //TODO: handle npr exception
+        if (getAuthPerson().getId() != character.getOwner().getId()) {
+            //TODO: throw exception
+        }
+
+        return character;
+    }
+
+    public CharacterDTO findSelectedCharacter() {
+        List<CharacterDTO> characters = findCharactersByOwner();
+
+        //TODO: stream
+        for (CharacterDTO characterDTO : characters) {
+            if (characterDTO.isSelected()) {
+                return characterDTO;
+            }
+        }
+
+        return null;
+    }
+
+    @Transactional
+    public CharacterDTO createCharacter(CharacterDTO characterDTO) {
+        Character character = convertToCharacter(characterDTO);
+
+        unselectAllCharacters();
+        character.setSelected(true);
+        character.setOwner(getAuthPerson());
+
+        //TODO: create character mesh configs
+
+        characterRepository.save(character);
+        return convertToCharacterDTO(character); //refactor this
+    }
+
+    @Transactional
+    public void unselectAllCharacters() {
+        List<Character> characters = characterRepository.findCharactersByOwner(getAuthPerson());
+
+        //TODO: stream
+        for (Character character : characters) {
+            if (character.isSelected()) {
+                character.setSelected(false);
+                characterRepository.save(character);
+            }
+        }
+    }
+
+    @Transactional
+    public CharacterDTO selectCharacterById(int id) {
+        unselectAllCharacters();
+
+        Character targetCharacter = findCharacterById(id);
+        targetCharacter.setSelected(true);
+        characterRepository.save(targetCharacter);
+        return convertToCharacterDTO(targetCharacter);
     }
 
     private CharacterDTO convertToCharacterDTO(Character character) {
@@ -47,5 +105,12 @@ public class CharacterService {
 
     private Character convertToCharacter(CharacterDTO characterDTO) {
         return modelMapper.map(characterDTO, Character.class);
+    }
+
+    private Person getAuthPerson() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
+        Person person = personDetails.getPerson();
+        return person;
     }
 }

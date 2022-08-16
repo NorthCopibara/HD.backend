@@ -1,9 +1,8 @@
 package ru.northcapybara.HomelessDude.controllers;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.northcapybara.HomelessDude.dto.CharacterDTO;
+import ru.northcapybara.HomelessDude.models.Character;
 import ru.northcapybara.HomelessDude.services.CharacterService;
 
 import java.util.List;
@@ -20,5 +19,15 @@ public class CharacterSelectionController {
     @GetMapping("/selection")
     public List<CharacterDTO> getSelection() {
         return characterService.findCharactersByOwner();
+    }
+
+    @GetMapping("/selection/{character_id}")
+    public CharacterDTO getSelectionCharacter(@PathVariable("character_id") int id) {
+        return characterService.selectCharacterById(id);
+    }
+
+    @PostMapping("/create")
+    public CharacterDTO createCharacter(@RequestBody CharacterDTO characterDTO) { //TODO: error requests
+        return characterService.createCharacter(characterDTO);
     }
 }
