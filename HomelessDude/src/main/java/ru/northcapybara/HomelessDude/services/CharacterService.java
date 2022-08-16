@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.northcapybara.HomelessDude.dto.CharacterDTO;
 import ru.northcapybara.HomelessDude.models.Character;
+import ru.northcapybara.HomelessDude.models.CharacterMeshConfig;
 import ru.northcapybara.HomelessDude.models.Person;
-import ru.northcapybara.HomelessDude.repositories.CharacterMeshConfigRepository;
 import ru.northcapybara.HomelessDude.repositories.CharacterRepository;
 import ru.northcapybara.HomelessDude.security.PersonDetails;
 
@@ -21,13 +21,13 @@ public class CharacterService {
 
     private final ModelMapper modelMapper;
 
-    private final CharacterMeshConfigRepository characterMeshConfigRepository;
+    private final CharacterMeshConfigService characterMeshConfigService;
 
     public CharacterService(CharacterRepository characterRepository,
-                            ModelMapper modelMapper, CharacterMeshConfigRepository characterMeshConfigRepository) {
+                            ModelMapper modelMapper, CharacterMeshConfigService characterMeshConfigService) {
         this.characterRepository = characterRepository;
         this.modelMapper = modelMapper;
-        this.characterMeshConfigRepository = characterMeshConfigRepository;
+        this.characterMeshConfigService = characterMeshConfigService;
     }
 
     public List<CharacterDTO> findCharactersByOwner() {
@@ -70,10 +70,18 @@ public class CharacterService {
         character.setSelected(true);
         character.setOwner(getAuthPerson());
 
-        //TODO: create character mesh configs
+        saveCharacter(character);
 
-        characterRepository.save(character);
+        for (CharacterMeshConfig characterMeshConfig : character.getCharacterMeshConfigs()) {
+            characterMeshConfigService.createCharacterMeshConfig(characterMeshConfig, character);
+        }
+
         return convertToCharacterDTO(character); //refactor this
+    }
+
+    @Transactional
+    public void saveCharacter(Character character) {
+        characterRepository.save(character);
     }
 
     @Transactional
