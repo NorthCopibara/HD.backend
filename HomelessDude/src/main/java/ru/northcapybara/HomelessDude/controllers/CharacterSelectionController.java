@@ -2,10 +2,8 @@ package ru.northcapybara.HomelessDude.controllers;
 
 import org.springframework.web.bind.annotation.*;
 import ru.northcapybara.HomelessDude.dto.CharacterDTO;
-import ru.northcapybara.HomelessDude.models.Character;
+import ru.northcapybara.HomelessDude.dto.SelectionMenuDTO;
 import ru.northcapybara.HomelessDude.services.CharacterService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/menu")
@@ -17,8 +15,8 @@ public class CharacterSelectionController {
     }
 
     @GetMapping("/selection")
-    public List<CharacterDTO> getSelection() {
-        return characterService.findCharactersByOwner();
+    public SelectionMenuDTO getSelection() {
+        return new SelectionMenuDTO(characterService.findCharactersByOwner());
     }
 
     @GetMapping("/selection/{character_id}")
