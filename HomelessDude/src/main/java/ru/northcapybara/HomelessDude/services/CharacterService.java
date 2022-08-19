@@ -39,14 +39,19 @@ public class CharacterService {
     }
 
     public Character findCharacterById(int id) {
-        Character character = characterRepository.findCharacterByCharacterId(id);
+        List<Character> characters = characterRepository.findCharactersByOwner(getAuthPerson());
+ /*       Character character = characterRepository.findCharacterByCharacterId(id);
 
         //TODO: handle npr exception
         if (getAuthPerson().getId() != character.getOwner().getId()) {
             //TODO: throw exception
         }
+*/
+        if(id >= 0 && id < characters.size()) {
+            return characters.get(id);
+        }
 
-        return character;
+        return null;
     }
 
     public CharacterDTO findSelectedCharacter() {
