@@ -53,7 +53,7 @@ public class CharacterService {
     public CharacterDTO findSelectedCharacter() {
         List<CharacterDTO> characters = findCharactersByOwner();
 
-        return characters.stream().filter(x->x.isSelected()).findFirst().orElse(null);
+        return characters.stream().filter(character->character.isSelected()).findFirst().orElse(null);
     }
 
     @Transactional
@@ -87,7 +87,6 @@ public class CharacterService {
     public void unselectAllCharacters() {
         List<Character> characters = characterRepository.findCharactersByOwner(getAuthPerson());
 
-        //TODO: stream
         for (Character character : characters) {
             if (character.isSelected()) {
                 character.setSelected(false);
@@ -117,7 +116,6 @@ public class CharacterService {
     private Person getAuthPerson() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
-        Person person = personDetails.getPerson();
-        return person;
+        return personDetails.getPerson();
     }
 }
