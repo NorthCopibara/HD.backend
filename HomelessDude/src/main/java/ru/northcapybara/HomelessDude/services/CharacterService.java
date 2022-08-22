@@ -51,7 +51,7 @@ public class CharacterService {
     public CharacterDTO findSelectedCharacter() {
         List<CharacterDTO> characters = findCharactersByOwner();
 
-        return characters.stream().filter(x->x.isSelected()).findFirst().orElse(null);;
+        return characters.stream().filter(x->x.isSelected()).findFirst().orElse(null);
     }
 
     @Transactional
