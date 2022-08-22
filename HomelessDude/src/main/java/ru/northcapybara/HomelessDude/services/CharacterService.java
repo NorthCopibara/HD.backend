@@ -11,6 +11,8 @@ import ru.northcapybara.HomelessDude.models.CharacterMeshConfig;
 import ru.northcapybara.HomelessDude.models.Person;
 import ru.northcapybara.HomelessDude.repositories.CharacterRepository;
 import ru.northcapybara.HomelessDude.security.PersonDetails;
+import ru.northcapybara.HomelessDude.util.CharacterNotFoundException;
+import ru.northcapybara.HomelessDude.util.NotUniqueCharacterNameException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,7 +47,7 @@ public class CharacterService {
             return characters.get(id);
         }
 
-        return null;
+        throw new CharacterNotFoundException("Character " + id + " not found");
     }
 
     public CharacterDTO findSelectedCharacter() {
@@ -57,6 +59,11 @@ public class CharacterService {
     @Transactional
     public Character createCharacter(CharacterDTO characterDTO) {
         Character character = convertToCharacter(characterDTO);
+
+        Character createdCharacter = characterRepository.findCharacterByName(characterDTO.getName());
+        if(createdCharacter != null) {
+            throw new NotUniqueCharacterNameException("Character with that name already exists");
+        }
 
         unselectAllCharacters();
         character.setSelected(true);

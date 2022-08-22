@@ -11,5 +11,7 @@ import java.util.List;
 public interface CharacterRepository extends JpaRepository<Character, Integer> {
     List<Character> findCharactersByOwner(Person person);
 
+    Character findCharacterByName(String name);
+
     Character findCharacterByCharacterId(int id);
 }
