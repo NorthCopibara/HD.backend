@@ -21,11 +21,11 @@ public class CharacterSelectionController {
 
     @GetMapping("/selection/{character_id}")
     public CharacterDTO getSelectionCharacter(@PathVariable("character_id") int id) {
-        return characterService.selectCharacterById(id);
+        return characterService.convertToCharacterDTO(characterService.selectCharacterById(id));
     }
 
     @PostMapping("/create")
     public CharacterDTO createCharacter(@RequestBody CharacterDTO characterDTO) { //TODO: error requests
-        return characterService.createCharacter(characterDTO);
+        return characterService.convertToCharacterDTO(characterService.createCharacter(characterDTO));
     }
 }

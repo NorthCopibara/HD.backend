@@ -40,13 +40,7 @@ public class CharacterService {
 
     public Character findCharacterById(int id) {
         List<Character> characters = characterRepository.findCharactersByOwner(getAuthPerson());
- /*       Character character = characterRepository.findCharacterByCharacterId(id);
 
-        //TODO: handle npr exception
-        if (getAuthPerson().getId() != character.getOwner().getId()) {
-            //TODO: throw exception
-        }
-*/
         if(id >= 0 && id < characters.size()) {
             return characters.get(id);
         }
@@ -57,18 +51,11 @@ public class CharacterService {
     public CharacterDTO findSelectedCharacter() {
         List<CharacterDTO> characters = findCharactersByOwner();
 
-        //TODO: stream
-        for (CharacterDTO characterDTO : characters) {
-            if (characterDTO.isSelected()) {
-                return characterDTO;
-            }
-        }
-
-        return null;
+        return characters.stream().filter(x->x.isSelected()).findFirst().orElse(null);;
     }
 
     @Transactional
-    public CharacterDTO createCharacter(CharacterDTO characterDTO) {
+    public Character createCharacter(CharacterDTO characterDTO) {
         Character character = convertToCharacter(characterDTO);
 
         unselectAllCharacters();
@@ -81,7 +68,7 @@ public class CharacterService {
             characterMeshConfigService.createCharacterMeshConfig(characterMeshConfig, character);
         }
 
-        return convertToCharacterDTO(character); //refactor this
+        return character;
     }
 
     @Transactional
@@ -103,20 +90,20 @@ public class CharacterService {
     }
 
     @Transactional
-    public CharacterDTO selectCharacterById(int id) {
+    public Character selectCharacterById(int id) {
         unselectAllCharacters();
 
         Character targetCharacter = findCharacterById(id);
         targetCharacter.setSelected(true);
         characterRepository.save(targetCharacter);
-        return convertToCharacterDTO(targetCharacter);
+        return targetCharacter;
     }
 
-    private CharacterDTO convertToCharacterDTO(Character character) {
+    public CharacterDTO convertToCharacterDTO(Character character) {
         return modelMapper.map(character, CharacterDTO.class);
     }
 
-    private Character convertToCharacter(CharacterDTO characterDTO) {
+    public Character convertToCharacter(CharacterDTO characterDTO) {
         return modelMapper.map(characterDTO, Character.class);
     }
 
